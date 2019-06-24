@@ -1,0 +1,13 @@
+plugins {
+	id 'groovy'
+	id 'java-gradle-plugin'
+}
+
+gradlePlugin {
+	plugins {
+		create('matrixTest') {
+			id = 'io.spring.gradle.matrix-test'
+			implementationClass = 'io.spring.gradle.matrixtest.MatrixTestPlugin'
+		}
+	}
+}
