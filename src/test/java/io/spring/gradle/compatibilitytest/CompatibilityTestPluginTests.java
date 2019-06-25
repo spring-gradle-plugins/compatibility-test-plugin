@@ -16,14 +16,11 @@
 
 package io.spring.gradle.compatibilitytest;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import org.gradle.api.Project;
 import org.gradle.testfixtures.ProjectBuilder;
 import org.junit.Test;
 
-import io.spring.gradle.compatibilitytest.CompatibilityTestPlugin;
-import io.spring.gradle.compatibilitytest.CompatibilityTestExtension;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests for {@link CompatibilityTestPlugin}.
@@ -36,7 +33,8 @@ public class CompatibilityTestPluginTests {
 	public void extensionIsCreated() {
 		Project project = ProjectBuilder.builder().build();
 		project.getPluginManager().apply(CompatibilityTestPlugin.class);
-		assertThat(project.getExtensions().findByName("compatibilityTest")).isInstanceOf(CompatibilityTestExtension.class);
+		assertThat(project.getExtensions().findByName("compatibilityTest"))
+				.isInstanceOf(CompatibilityTestExtension.class);
 	}
 
 }

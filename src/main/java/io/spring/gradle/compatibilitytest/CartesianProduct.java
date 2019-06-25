@@ -26,7 +26,11 @@ import java.util.Set;
  *
  * @author Andy Wilkinson
  */
-class CartesianProduct {
+final class CartesianProduct {
+
+	private CartesianProduct() {
+
+	}
 
 	static <E> Set<List<E>> of(List<? extends Set<? extends E>> sets) {
 		return cartesianProduct(sets, 0);
@@ -36,9 +40,10 @@ class CartesianProduct {
 		Set<List<E>> result = new LinkedHashSet<>();
 		if (index == sets.size()) {
 			result.add(new ArrayList<>());
-		} else {
-			for (E item: sets.get(index)) {
-				for (List<E> product: cartesianProduct(sets, index + 1)) {
+		}
+		else {
+			for (E item : sets.get(index)) {
+				for (List<E> product : cartesianProduct(sets, index + 1)) {
 					product.add(0, item);
 					result.add(product);
 				}

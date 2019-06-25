@@ -1,7 +1,19 @@
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath "io.spring.javaformat:spring-javaformat-gradle-plugin:$springJavaFormatVersion"
+	}
+}
+
 plugins {
+	id 'checkstyle'
 	id 'java-gradle-plugin'
 	id 'maven-publish'
 }
+
+apply plugin: 'io.spring.javaformat'
 
 group 'io.spring.gradle'
 
@@ -19,6 +31,7 @@ repositories {
 }
 
 dependencies {
+	checkstyle "io.spring.javaformat:spring-javaformat-checkstyle:$springJavaFormatVersion"
 	testCompile 'org.assertj:assertj-core:3.11.1'
 	testCompile 'junit:junit:4.12'
 }

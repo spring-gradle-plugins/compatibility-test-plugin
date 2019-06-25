@@ -16,8 +16,6 @@
 
 package io.spring.gradle.compatibilitytest;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -25,7 +23,7 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import io.spring.gradle.compatibilitytest.CartesianProduct;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests for {@link CartesianProduct}.
@@ -44,14 +42,16 @@ public class CartesianProductTests {
 	@Test
 	public void twoSets() {
 		Set<List<String>> result = CartesianProduct.of(list(set("a", "b"), set("1", "2", "3")));
-		assertThat(result).containsExactly(list("a", "1"), list("a", "2"), list("a", "3"), list("b", "1"), list("b", "2"), list("b", "3"));
+		assertThat(result).containsExactly(list("a", "1"), list("a", "2"), list("a", "3"), list("b", "1"),
+				list("b", "2"), list("b", "3"));
 	}
 
 	@Test
 	public void threeSets() {
 		Set<List<String>> result = CartesianProduct.of(list(set("a", "b"), set("1", "2"), set("red", "blue")));
-		assertThat(result).containsExactly(list("a", "1", "red"), list("a", "1", "blue"), list("a", "2", "red"), list("a", "2", "blue"),
-				list("b", "1", "red"), list("b", "1", "blue"), list("b", "2", "red"), list("b", "2", "blue"));
+		assertThat(result).containsExactly(list("a", "1", "red"), list("a", "1", "blue"), list("a", "2", "red"),
+				list("a", "2", "blue"), list("b", "1", "red"), list("b", "1", "blue"), list("b", "2", "red"),
+				list("b", "2", "blue"));
 	}
 
 	@Test
@@ -60,16 +60,16 @@ public class CartesianProductTests {
 		assertThat(result.isEmpty());
 	}
 
-	private final Set<String> set(String ... items) {
+	private Set<String> set(String... items) {
 		return new LinkedHashSet<>(Arrays.asList(items));
 	}
 
 	@SafeVarargs
-	private final List<Set<String>> list(Set<String> ... sets) {
+	private final List<Set<String>> list(Set<String>... sets) {
 		return Arrays.asList(sets);
 	}
 
-	private final List<String> list(String... items) {
+	private List<String> list(String... items) {
 		return Arrays.asList(items);
 	}
 

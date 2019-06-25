@@ -52,34 +52,41 @@ public class CompatibilityTestPlugin implements Plugin<Project> {
 		if (matrixEntries.isEmpty()) {
 			return;
 		}
-		CartesianProduct.of(matrixEntries).forEach((dependencyVersions) -> configureTestTask(project, dependencyVersions));
+		CartesianProduct.of(matrixEntries)
+				.forEach((dependencyVersions) -> configureTestTask(project, dependencyVersions));
 	}
 
 	private void configureTestTask(Project project, List<DependencyVersion> dependencyVersions) {
-		String identifier = dependencyVersions.stream().map(DependencyVersion::getIdentifier).collect(Collectors.joining("_"));
-		Test matrixTest = project.getTasks().create("matrixTest_" + identifier, Test.class, (task) -> configureMatrixTestTask(project, task, identifier, dependencyVersions));
+		String identifier = dependencyVersions.stream().map(DependencyVersion::getIdentifier)
+				.collect(Collectors.joining("_"));
+		Test matrixTest = project.getTasks().create("matrixTest_" + identifier, Test.class,
+				(task) -> configureMatrixTestTask(project, task, identifier, dependencyVersions));
 		project.getTasks().getByName(JavaBasePlugin.CHECK_TASK_NAME).dependsOn(matrixTest);
 	}
 
-	private void configureMatrixTestTask(Project project, Test matrixTest, String identifier, List<DependencyVersion> dependencyVersions) {
-		matrixTest.setDescription("Runs the unit tests with " + dependencyVersions.stream().map(DependencyVersion::getDescription).collect(Collectors.joining(", ")));
+	private void configureMatrixTestTask(Project project, Test matrixTest, String identifier,
+			List<DependencyVersion> dependencyVersions) {
+		matrixTest.setDescription("Runs the unit tests with "
+				+ dependencyVersions.stream().map(DependencyVersion::getDescription).collect(Collectors.joining(", ")));
 		matrixTest.setGroup(JavaBasePlugin.VERIFICATION_GROUP);
 		SourceSetContainer sourceSets = project.getConvention().findPlugin(JavaPluginConvention.class).getSourceSets();
 		SourceSet testSourceSet = sourceSets.getByName(SourceSet.TEST_SOURCE_SET_NAME);
 		String runtimeClasspathConfigurationName = testSourceSet.getRuntimeClasspathConfigurationName();
-		Configuration configuration = project.getConfigurations().create(runtimeClasspathConfigurationName + "_" + identifier);
+		Configuration configuration = project.getConfigurations()
+				.create(runtimeClasspathConfigurationName + "_" + identifier);
 		configuration.extendsFrom(project.getConfigurations().getByName(runtimeClasspathConfigurationName));
-		configuration.getResolutionStrategy().eachDependency((details) -> {
-			dependencyVersions.stream()
-					.filter((dependencyVersion) -> matches(dependencyVersion, details))
-					.forEach((dependencyVersion) -> details.useVersion(dependencyVersion.getVersion()));
-		});
-		matrixTest.setClasspath(project.files(testSourceSet.getOutput(), sourceSets.getByName(SourceSet.MAIN_SOURCE_SET_NAME).getOutput(), configuration));
+		configuration.getResolutionStrategy()
+				.eachDependency((details) -> dependencyVersions.stream()
+						.filter((dependencyVersion) -> matches(dependencyVersion, details))
+						.forEach((dependencyVersion) -> details.useVersion(dependencyVersion.getVersion())));
+		matrixTest.setClasspath(project.files(testSourceSet.getOutput(),
+				sourceSets.getByName(SourceSet.MAIN_SOURCE_SET_NAME).getOutput(), configuration));
 	}
 
 	private boolean matches(DependencyVersion dependencyVersion, DependencyResolveDetails details) {
 		ModuleVersionSelector selector = details.getRequested();
-		return dependencyVersion.getGroupId().equals(selector.getGroup()) && (dependencyVersion.getArtifactId() == null || dependencyVersion.getArtifactId().equals(selector.getName()));
+		return dependencyVersion.getGroupId().equals(selector.getGroup()) && (dependencyVersion.getArtifactId() == null
+				|| dependencyVersion.getArtifactId().equals(selector.getName()));
 	}
 
 }

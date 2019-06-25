@@ -39,22 +39,23 @@ public class CompatibilityTestExtension {
 	}
 
 	/**
-	 * Creates a new entry in the matrix for a dependency with the given {@code name}.
-	 * The {@code configurer} is called to configure the entry.
-	 *
+	 * Creates a new entry in the matrix for a dependency with the given {@code name}. The
+	 * {@code configurer} is called to configure the entry.
 	 * @param name name of the dependency
-	 * @param configurer provides further configuration of the dependency
+	 * @param action provides further configuration of the dependency
 	 */
 	public void dependency(String name, Action<DependencyConfigurer> action) {
 		DependencyConfigurer configurer = new DependencyConfigurer();
 		action.execute(configurer);
-		Set<DependencyVersion> dependencyVersions = configurer.versions.stream().map((version) -> new DependencyVersion(name, configurer.getGroupId(), configurer.getArtifactId(), version)).collect(Collectors.toSet());
+		Set<DependencyVersion> dependencyVersions = configurer.versions.stream().map(
+				(version) -> new DependencyVersion(name, configurer.getGroupId(), configurer.getArtifactId(), version))
+				.collect(Collectors.toSet());
 		this.testMatrix.add(dependencyVersions);
 	}
 
 	/**
-	 * Configurer for an entry in a {@link CompatibilityMatrix} that controls the versions of a
-	 * dependency or set of dependencies identified by a {@link groupId} and optional
+	 * Configurer for an entry in a {@link CompatibilityMatrix} that controls the versions
+	 * of a dependency or set of dependencies identified by a {@link groupId} and optional
 	 * {@link artifactId}.
 	 */
 	public static class DependencyConfigurer {
@@ -66,7 +67,7 @@ public class CompatibilityTestExtension {
 		private List<String> versions = new ArrayList<>();
 
 		public String getGroupId() {
-			return groupId;
+			return this.groupId;
 		}
 
 		public void setGroupId(String groupId) {
@@ -74,7 +75,7 @@ public class CompatibilityTestExtension {
 		}
 
 		public String getArtifactId() {
-			return artifactId;
+			return this.artifactId;
 		}
 
 		public void setArtifactId(String artifactId) {
@@ -82,7 +83,7 @@ public class CompatibilityTestExtension {
 		}
 
 		public List<String> getVersions() {
-			return versions;
+			return this.versions;
 		}
 
 		public void setVersions(List<String> versions) {

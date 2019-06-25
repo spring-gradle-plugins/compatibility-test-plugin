@@ -20,18 +20,27 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Matrix of {@link DependencyVersion} dependency versions with which the project must be
+ * compatible.
+ *
+ * @author Andy Wilkinson
+ */
 class CompatibilityMatrix {
 
 	private final List<Set<DependencyVersion>> entries = new ArrayList<>();
 
 	void add(Set<DependencyVersion> dependencyVersions) {
-		entries.add(dependencyVersions);
+		this.entries.add(dependencyVersions);
 	}
 
 	List<Set<DependencyVersion>> getEntries() {
 		return this.entries;
 	}
 
+	/**
+	 * A version of a dependency with which the project must be compatible.
+	 */
 	static final class DependencyVersion {
 
 		private final String name;
@@ -50,26 +59,25 @@ class CompatibilityMatrix {
 		}
 
 		String getGroupId() {
-			return groupId;
+			return this.groupId;
 		}
 
 		String getArtifactId() {
-			return artifactId;
+			return this.artifactId;
 		}
 
 		String getVersion() {
-			return version;
+			return this.version;
 		}
 
 		String getIdentifier() {
-			return name.toLowerCase().replace(' ',  '_') + "_" + version;
+			return this.name.toLowerCase().replace(' ', '_') + "_" + this.version;
 		}
 
 		String getDescription() {
-			return name + " " + version;
+			return this.name + " " + this.version;
 		}
 
 	}
-
 
 }
