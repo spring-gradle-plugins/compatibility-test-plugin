@@ -1,0 +1,8 @@
+github-repo: "https://github.com/spring-gradle-plugins/compatibility-test-plugin.git"
+github-repo-name: "spring-gradle-plugins/compatibility-test-plugin"
+docker-hub-organization: "springci"
+artifactory-server: "https://repo.spring.io"
+branch: "master"
+build-name: "compatibility-test-plugin"
+bintray-subject: "spring"
+bintray-repo: "jars"
