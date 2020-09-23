@@ -43,25 +43,30 @@ public class CompatibilityTestPlugin implements Plugin<Project> {
 	@Override
 	public void apply(Project project) {
 		CompatibilityMatrix testMatrix = new CompatibilityMatrix();
-		project.getExtensions().add("compatibilityTest", new CompatibilityTestExtension(testMatrix));
-		project.afterEvaluate((evaluated) -> configure(project, testMatrix));
+		CompatibilityTestExtension extension = new CompatibilityTestExtension(testMatrix);
+		project.getExtensions().add("compatibilityTest", extension);
+		project.afterEvaluate((evaluated) -> configure(project, testMatrix, extension));
 	}
 
-	private void configure(Project project, CompatibilityMatrix testMatrix) {
+	private void configure(Project project, CompatibilityMatrix testMatrix, CompatibilityTestExtension extension) {
 		List<Set<DependencyVersion>> matrixEntries = testMatrix.getEntries();
 		if (matrixEntries.isEmpty()) {
 			return;
 		}
 		CartesianProduct.of(matrixEntries)
-				.forEach((dependencyVersions) -> configureTestTask(project, dependencyVersions));
+				.forEach((dependencyVersions) -> configureTestTask(project, dependencyVersions, extension));
 	}
 
-	private void configureTestTask(Project project, List<DependencyVersion> dependencyVersions) {
+	private void configureTestTask(Project project, List<DependencyVersion> dependencyVersions,
+			CompatibilityTestExtension extension) {
 		String identifier = dependencyVersions.stream().map(DependencyVersion::getIdentifier)
 				.collect(Collectors.joining("_"));
 		Test matrixTest = project.getTasks().create("matrixTest_" + identifier, Test.class,
 				(task) -> configureMatrixTestTask(project, task, identifier, dependencyVersions));
 		project.getTasks().getByName(JavaBasePlugin.CHECK_TASK_NAME).dependsOn(matrixTest);
+		if (extension.isUseJUnitPlatform()) {
+			matrixTest.useJUnitPlatform();
+		}
 	}
 
 	private void configureMatrixTestTask(Project project, Test matrixTest, String identifier,
