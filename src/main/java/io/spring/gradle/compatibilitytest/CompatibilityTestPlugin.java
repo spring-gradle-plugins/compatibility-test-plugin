@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2019 the original author or authors.
+ * Copyright 2014-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ import org.gradle.api.tasks.testing.Test;
 import io.spring.gradle.compatibilitytest.CompatibilityMatrix.DependencyVersion;
 
 /**
- * Gradle plugin for matrix testing.
+ * Gradle plugin for compatibility testing.
  *
  * @author Andy Wilkinson
  */
@@ -61,19 +61,19 @@ public class CompatibilityTestPlugin implements Plugin<Project> {
 			CompatibilityTestExtension extension) {
 		String identifier = dependencyVersions.stream().map(DependencyVersion::getIdentifier)
 				.collect(Collectors.joining("_"));
-		Test matrixTest = project.getTasks().create("matrixTest_" + identifier, Test.class,
+		Test compatibilityTest = project.getTasks().create("compatibilityTest_" + identifier, Test.class,
 				(task) -> configureMatrixTestTask(project, task, identifier, dependencyVersions));
-		project.getTasks().getByName(JavaBasePlugin.CHECK_TASK_NAME).dependsOn(matrixTest);
 		if (extension.isUseJUnitPlatform()) {
-			matrixTest.useJUnitPlatform();
+			compatibilityTest.useJUnitPlatform();
 		}
+		project.getTasks().getByName(JavaBasePlugin.CHECK_TASK_NAME).dependsOn(compatibilityTest);
 	}
 
-	private void configureMatrixTestTask(Project project, Test matrixTest, String identifier,
+	private void configureMatrixTestTask(Project project, Test compatibilityTest, String identifier,
 			List<DependencyVersion> dependencyVersions) {
-		matrixTest.setDescription("Runs the unit tests with "
+		compatibilityTest.setDescription("Runs the unit tests with "
 				+ dependencyVersions.stream().map(DependencyVersion::getDescription).collect(Collectors.joining(", ")));
-		matrixTest.setGroup(JavaBasePlugin.VERIFICATION_GROUP);
+		compatibilityTest.setGroup(JavaBasePlugin.VERIFICATION_GROUP);
 		SourceSetContainer sourceSets = project.getConvention().findPlugin(JavaPluginConvention.class).getSourceSets();
 		SourceSet testSourceSet = sourceSets.getByName(SourceSet.TEST_SOURCE_SET_NAME);
 		String runtimeClasspathConfigurationName = testSourceSet.getRuntimeClasspathConfigurationName();
@@ -84,7 +84,7 @@ public class CompatibilityTestPlugin implements Plugin<Project> {
 				.eachDependency((details) -> dependencyVersions.stream()
 						.filter((dependencyVersion) -> matches(dependencyVersion, details))
 						.forEach((dependencyVersion) -> details.useVersion(dependencyVersion.getVersion())));
-		matrixTest.setClasspath(project.files(testSourceSet.getOutput(),
+		compatibilityTest.setClasspath(project.files(testSourceSet.getOutput(),
 				sourceSets.getByName(SourceSet.MAIN_SOURCE_SET_NAME).getOutput(), configuration));
 	}
 
