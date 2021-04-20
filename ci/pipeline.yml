@@ -246,9 +246,9 @@ jobs:
       BINTRAY_SUBJECT: ((bintray-subject))
       BINTRAY_REPO: ((bintray-repo))
 groups:
-- name: "Build"
+- name: "build"
   jobs: ["build"]
-- name: "Release"
+- name: "release"
   jobs: ["stage-milestone", "stage-rc", "stage-release", "promote-milestone", "promote-rc", "promote-release", "sync-to-maven-central"]
-- name: "CI Images"
+- name: "ci-image"
   jobs: ["build-compatibility-test-plugin-ci-images"]
