@@ -52,6 +52,7 @@ jobs:
   plan:
   - get: ci-images-git-repo
     trigger: true
+  - get: git-repo
   - task: build-ci-image
     privileged: true
     file: git-repo/ci/tasks/build-ci-image.yml
