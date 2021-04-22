@@ -13,16 +13,14 @@ caches:
 params:
   CONTEXT: ci-images-git-repo/ci/images
   DOCKERFILE: ci-images-git-repo/ci/images/((ci-image-name))/Dockerfile
-  DOCKER_HUB_USERNAME: ((docker-hub-username))
-  DOCKER_HUB_PASSWORD: ((docker-hub-password))
+  DOCKER_HUB_AUTH: ((docker-hub-auth))
 run:
   path: /bin/sh
   args:
   - "-c"
   - |
     mkdir -p /root/.docker
-    AUTH="$(echo -n "${DOCKER_HUB_USERNAME}:${DOCKER_HUB_PASSWORD}" | base64 -w 0)"
-    cat > docker-creds/config.json <<EOF
-    "auths": { "${DOCKER_REGISTRY}": { "auth": "$AUTH" }}}
+    cat > /root/.docker/config.json <<EOF
+    { "auths": { "https://index.docker.io/v1/": { "auth": "$DOCKER_HUB_AUTH" }}}
     EOF
     build
