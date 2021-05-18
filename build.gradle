@@ -1,14 +1,6 @@
-buildscript {
-	repositories {
-		mavenCentral()
-	}
-	dependencies {
-		classpath "io.spring.javaformat:spring-javaformat-gradle-plugin:$springJavaFormatVersion"
-	}
-}
-
 plugins {
 	id 'checkstyle'
+	id 'io.spring.javaformat' version "$springJavaFormatVersion"
 	id 'io.spring.nohttp' version '0.0.4.RELEASE'
 	id 'java-gradle-plugin'
 	id 'maven-publish'
