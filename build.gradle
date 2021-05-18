@@ -9,6 +9,7 @@ plugins {
 apply plugin: 'io.spring.javaformat'
 
 group 'io.spring.gradle'
+description = 'Compatibility Test Plugin'
 
 gradlePlugin {
 	plugins {
@@ -39,4 +40,49 @@ java {
 
 test {
 	useJUnitPlatform()
+}
+
+publishing {
+	publications.withType(MavenPublication) {
+		pom {
+			name = project.description
+			description = project.description
+			url = "https://github.com/spring-gradle-plugins/compatibility-test-plugin"
+			organization {
+				name = "Spring IO"
+				url = "https://spring.io"
+			}
+			licenses {
+				license {
+					name = 'The Apache Software License, Version 2.0'
+					url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
+					distribution = 'repo'
+				}
+			}
+			scm {
+				url = "https://github.com/spring-gradle-plugins/compatibility-test-plugin"
+				connection = "scm:git:git://github.com/spring-gradle-plugins/compatibility-test-plugin"
+				developerConnection = "scm:git:git://github.com/spring-gradle-plugins/compatibility-test-plugin"
+			}
+			developers {
+				developer {
+					id = "wilkinsona"
+					name = "Andy Wilkinson"
+					email = "wilkinsona@vmware.com"
+				}
+			}
+			issueManagement {
+				system = "GitHub"
+				url = "https://github.com/spring-gradle-plugins/compatibility-test-plugin"
+			}
+		}
+	}
+	if (project.hasProperty("distributionRepository")) {
+		repositories {
+			maven {
+				url = "${distributionRepository}"
+				name = "distribution"
+			}
+		}
+	}
 }
