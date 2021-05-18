@@ -7,5 +7,4 @@ The pipeline can be deployed using the following command:
 $ fly -t compatibility-test-plugin set-pipeline -p compatibility-test-plugin -c ci/pipeline.yml -l ci/parameters.yml
 ----
 
-NOTE: This assumes that you have credhub integration configured with the appropriate
-secrets.
+NOTE: This assumes that you have Vault integration configured with the appropriate secrets.
