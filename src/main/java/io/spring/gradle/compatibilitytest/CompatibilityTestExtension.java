@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2020 the original author or authors.
+ * Copyright 2014-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.gradle.api.Action;
+import org.gradle.api.tasks.testing.Test;
 
 import io.spring.gradle.compatibilitytest.CompatibilityMatrix.DependencyVersion;
 
@@ -69,7 +70,7 @@ public class CompatibilityTestExtension {
 
 	/**
 	 * Configurer for the versions of a dependency or set of dependencies identified by a
-	 * {@link groupId} and optional {@link artifactId} against which compatibility testing
+	 * {@code groupId} and optional {@code artifactId} against which compatibility testing
 	 * is to be performed.
 	 */
 	public static class DependencyConfigurer {
