@@ -8,6 +8,10 @@ anchors:
     username: ((docker-hub-username))
     password: ((docker-hub-password))
     tag: ((branch))
+    registry_mirror:
+      host: ((docker-hub-mirror))
+      username: ((docker-hub-mirror-username))
+      password: ((docker-hub-mirror-password))
   gradle-enterprise-task-params: &gradle-enterprise-task-params
     GRADLE_ENTERPRISE_ACCESS_KEY: ((gradle_enterprise_secret_access_key))
     GRADLE_ENTERPRISE_CACHE_USERNAME: ((gradle_enterprise_cache_user.username))
@@ -32,6 +36,10 @@ anchors:
     build_number: "${BUILD_PIPELINE_NAME}-${BUILD_JOB_NAME}-${BUILD_NAME}"
     disable_checksum_uploads: true
     threads: 8
+  docker-hub-mirror-vars: &docker-hub-mirror-vars
+    docker-hub-mirror: ((docker-hub-mirror))
+    docker-hub-mirror-username: ((docker-hub-mirror-username))
+    docker-hub-mirror-password: ((docker-hub-mirror-password))
 resource_types:
 - name: artifactory-resource
   type: registry-image
@@ -105,6 +113,7 @@ jobs:
       image: ci-image
     vars:
       ci-image-name: ci-image
+      <<: *docker-hub-mirror-vars
   - put: ci-image
     params:
       image: ci-image/image.tar
