@@ -259,7 +259,6 @@ jobs:
 - name: promote-release
   serial: true
   plan:
-  - get: ci-image
   - get: git-repo
     trigger: false
   - get: artifactory-repo
@@ -273,6 +272,10 @@ jobs:
     file: git-repo/ci/tasks/promote.yml
     params:
       RELEASE_TYPE: RELEASE
+      SONATYPE_USERNAME: ((s01-user-token))
+      SONATYPE_PASSWORD: ((s01-user-token-password))
+      SONATYPE_URL: ((sonatype-url))
+      SONATYPE_STAGING_PROFILE_ID: ((sonatype-staging-profile-id))
       <<: *artifactory-task-params
   - task: generate-changelog
     file: git-repo/ci/tasks/generate-changelog.yml
