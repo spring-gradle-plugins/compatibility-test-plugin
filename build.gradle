@@ -11,7 +11,9 @@ description = "Compatibility Test Plugin"
 
 gradlePlugin {
 	plugins {
-		create("compatibilityTest") {
+		compatibilityTest {
+			description = project.description
+			displayName = project.description
 			id = "io.spring.compatibility-test"
 			implementationClass = "io.spring.gradle.compatibilitytest.CompatibilityTestPlugin"
 		}
