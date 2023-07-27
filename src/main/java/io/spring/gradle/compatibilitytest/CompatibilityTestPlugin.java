@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2020 the original author or authors.
+ * Copyright 2014-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,15 +54,17 @@ public class CompatibilityTestPlugin implements Plugin<Project> {
 			return;
 		}
 		CartesianProduct.of(matrixEntries)
-				.forEach((dependencyVersions) -> configureTestTask(project, dependencyVersions, extension));
+			.forEach((dependencyVersions) -> configureTestTask(project, dependencyVersions, extension));
 	}
 
 	private void configureTestTask(Project project, List<DependencyVersion> dependencyVersions,
 			CompatibilityTestExtension extension) {
-		String identifier = dependencyVersions.stream().map(DependencyVersion::getIdentifier)
-				.collect(Collectors.joining("_"));
-		Test compatibilityTest = project.getTasks().create("compatibilityTest_" + identifier, Test.class,
-				(task) -> configureMatrixTestTask(project, task, identifier, dependencyVersions));
+		String identifier = dependencyVersions.stream()
+			.map(DependencyVersion::getIdentifier)
+			.collect(Collectors.joining("_"));
+		Test compatibilityTest = project.getTasks()
+			.create("compatibilityTest_" + identifier, Test.class,
+					(task) -> configureMatrixTestTask(project, task, identifier, dependencyVersions));
 		if (extension.isUseJUnitPlatform()) {
 			compatibilityTest.useJUnitPlatform();
 		}
@@ -78,12 +80,12 @@ public class CompatibilityTestPlugin implements Plugin<Project> {
 		SourceSet testSourceSet = sourceSets.getByName(SourceSet.TEST_SOURCE_SET_NAME);
 		String runtimeClasspathConfigurationName = testSourceSet.getRuntimeClasspathConfigurationName();
 		Configuration configuration = project.getConfigurations()
-				.create(runtimeClasspathConfigurationName + "_" + identifier);
+			.create(runtimeClasspathConfigurationName + "_" + identifier);
 		configuration.extendsFrom(project.getConfigurations().getByName(runtimeClasspathConfigurationName));
 		configuration.getResolutionStrategy()
-				.eachDependency((details) -> dependencyVersions.stream()
-						.filter((dependencyVersion) -> matches(dependencyVersion, details))
-						.forEach((dependencyVersion) -> details.useVersion(dependencyVersion.getVersion())));
+			.eachDependency((details) -> dependencyVersions.stream()
+				.filter((dependencyVersion) -> matches(dependencyVersion, details))
+				.forEach((dependencyVersion) -> details.useVersion(dependencyVersion.getVersion())));
 		compatibilityTest.setClasspath(project.files(testSourceSet.getOutput(),
 				sourceSets.getByName(SourceSet.MAIN_SOURCE_SET_NAME).getOutput(), configuration));
 	}

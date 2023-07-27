@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2021 the original author or authors.
+ * Copyright 2012-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,8 +47,10 @@ public class GradleBuild {
 	void after() {
 		this.script = null;
 		try {
-			Files.walk(this.projectDir.toPath()).sorted(Comparator.reverseOrder()).map(Path::toFile)
-					.forEach(File::delete);
+			Files.walk(this.projectDir.toPath())
+				.sorted(Comparator.reverseOrder())
+				.map(Path::toFile)
+				.forEach(File::delete);
 		}
 		catch (IOException ex) {
 			throw new RuntimeException(ex);
@@ -77,8 +79,9 @@ public class GradleBuild {
 	public GradleRunner prepareRunner(String... arguments) throws IOException {
 		Files.copy(new File(this.script).toPath(), new File(this.projectDir, "build.gradle").toPath(),
 				StandardCopyOption.REPLACE_EXISTING);
-		GradleRunner gradleRunner = GradleRunner.create().withProjectDir(this.projectDir)
-				.withPluginClasspath(pluginClasspath());
+		GradleRunner gradleRunner = GradleRunner.create()
+			.withProjectDir(this.projectDir)
+			.withPluginClasspath(pluginClasspath());
 		gradleRunner.withDebug(true);
 		List<String> allArguments = new ArrayList<>();
 		allArguments.add("--stacktrace");

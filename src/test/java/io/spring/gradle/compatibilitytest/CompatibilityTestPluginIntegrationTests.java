@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2021 the original author or authors.
+ * Copyright 2014-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,21 +37,21 @@ class CompatibilityTestPluginIntegrationTests {
 	@Test
 	void whenOnlyGroupIdIsSetThenVersionsOfAllModulesInTheGroupAreChanged() {
 		assertThat(this.gradleBuild.build("resolve", "-PconfigurationName=testRuntimeClasspath").getOutput())
-				.contains("spring-core-5.2.10.RELEASE.jar", "spring-jcl-5.2.10.RELEASE.jar");
+			.contains("spring-core-5.2.10.RELEASE.jar", "spring-jcl-5.2.10.RELEASE.jar");
 		assertThat(this.gradleBuild.build("resolve", "-PconfigurationName=testRuntimeClasspath_spring_framework_5.3.0")
-				.getOutput()).contains("spring-core-5.3.0.jar", "spring-jcl-5.3.0.jar");
+			.getOutput()).contains("spring-core-5.3.0.jar", "spring-jcl-5.3.0.jar");
 		assertThat(this.gradleBuild.build("resolve", "-PconfigurationName=testRuntimeClasspath_spring_framework_5.3.1")
-				.getOutput()).contains("spring-core-5.3.1.jar", "spring-jcl-5.3.1.jar");
+			.getOutput()).contains("spring-core-5.3.1.jar", "spring-jcl-5.3.1.jar");
 	}
 
 	@Test
 	void whenGroupIdAndArtifactIdAreSetThenOnlyTheVersionOfThatModuleIsChanged() {
 		assertThat(this.gradleBuild.build("resolve", "-PconfigurationName=testRuntimeClasspath").getOutput())
-				.contains("spring-core-5.2.10.RELEASE.jar", "spring-jcl-5.2.10.RELEASE.jar");
+			.contains("spring-core-5.2.10.RELEASE.jar", "spring-jcl-5.2.10.RELEASE.jar");
 		assertThat(this.gradleBuild.build("resolve", "-PconfigurationName=testRuntimeClasspath_spring-jcl_5.3.0")
-				.getOutput()).contains("spring-core-5.2.10.RELEASE.jar", "spring-jcl-5.3.0.jar");
+			.getOutput()).contains("spring-core-5.2.10.RELEASE.jar", "spring-jcl-5.3.0.jar");
 		assertThat(this.gradleBuild.build("resolve", "-PconfigurationName=testRuntimeClasspath_spring-jcl_5.3.1")
-				.getOutput()).contains("spring-core-5.2.10.RELEASE.jar", "spring-jcl-5.3.1.jar");
+			.getOutput()).contains("spring-core-5.2.10.RELEASE.jar", "spring-jcl-5.3.1.jar");
 	}
 
 	@Test
@@ -60,21 +60,21 @@ class CompatibilityTestPluginIntegrationTests {
 				"spring-core-5.2.10.RELEASE.jar", "spring-jcl-5.2.10.RELEASE.jar", "reactor-core-3.3.17.RELEASE.jar",
 				"reactive-streams-1.0.3.jar");
 		assertThat(this.gradleBuild
-				.build("resolve", "-PconfigurationName=testRuntimeClasspath_spring_framework_5.3.0_reactor_3.4.0")
-				.getOutput()).contains("spring-core-5.3.0.jar", "spring-jcl-5.3.0.jar", "reactor-core-3.4.0.jar",
-						"reactive-streams-1.0.3.jar");
+			.build("resolve", "-PconfigurationName=testRuntimeClasspath_spring_framework_5.3.0_reactor_3.4.0")
+			.getOutput()).contains("spring-core-5.3.0.jar", "spring-jcl-5.3.0.jar", "reactor-core-3.4.0.jar",
+					"reactive-streams-1.0.3.jar");
 		assertThat(this.gradleBuild
-				.build("resolve", "-PconfigurationName=testRuntimeClasspath_spring_framework_5.3.0_reactor_3.4.1")
-				.getOutput()).contains("spring-core-5.3.0.jar", "spring-jcl-5.3.0.jar", "reactor-core-3.4.1.jar",
-						"reactive-streams-1.0.3.jar");
+			.build("resolve", "-PconfigurationName=testRuntimeClasspath_spring_framework_5.3.0_reactor_3.4.1")
+			.getOutput()).contains("spring-core-5.3.0.jar", "spring-jcl-5.3.0.jar", "reactor-core-3.4.1.jar",
+					"reactive-streams-1.0.3.jar");
 		assertThat(this.gradleBuild
-				.build("resolve", "-PconfigurationName=testRuntimeClasspath_spring_framework_5.3.1_reactor_3.4.0")
-				.getOutput()).contains("spring-core-5.3.1.jar", "spring-jcl-5.3.1.jar", "reactor-core-3.4.0.jar",
-						"reactive-streams-1.0.3.jar");
+			.build("resolve", "-PconfigurationName=testRuntimeClasspath_spring_framework_5.3.1_reactor_3.4.0")
+			.getOutput()).contains("spring-core-5.3.1.jar", "spring-jcl-5.3.1.jar", "reactor-core-3.4.0.jar",
+					"reactive-streams-1.0.3.jar");
 		assertThat(this.gradleBuild
-				.build("resolve", "-PconfigurationName=testRuntimeClasspath_spring_framework_5.3.1_reactor_3.4.1")
-				.getOutput()).contains("spring-core-5.3.1.jar", "spring-jcl-5.3.1.jar", "reactor-core-3.4.1.jar",
-						"reactive-streams-1.0.3.jar");
+			.build("resolve", "-PconfigurationName=testRuntimeClasspath_spring_framework_5.3.1_reactor_3.4.1")
+			.getOutput()).contains("spring-core-5.3.1.jar", "spring-jcl-5.3.1.jar", "reactor-core-3.4.1.jar",
+					"reactive-streams-1.0.3.jar");
 	}
 
 }

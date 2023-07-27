@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2021 the original author or authors.
+ * Copyright 2014-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,9 +50,9 @@ public class CompatibilityTestExtension {
 	public void dependency(String name, Action<DependencyConfigurer> action) {
 		DependencyConfigurer configurer = new DependencyConfigurer();
 		action.execute(configurer);
-		Set<DependencyVersion> dependencyVersions = configurer.versions.stream().map(
-				(version) -> new DependencyVersion(name, configurer.getGroupId(), configurer.getArtifactId(), version))
-				.collect(Collectors.toSet());
+		Set<DependencyVersion> dependencyVersions = configurer.versions.stream()
+			.map((version) -> new DependencyVersion(name, configurer.getGroupId(), configurer.getArtifactId(), version))
+			.collect(Collectors.toSet());
 		this.testMatrix.add(dependencyVersions);
 	}
 
