@@ -4,14 +4,9 @@ anchors:
     username: ((github-username))
     password: ((github-password))
     branch: ((branch))
-  registry-image-resource-source: &registry-image-resource-source
+  registry-image-source: &registry-image-source
     username: ((docker-hub-username))
     password: ((docker-hub-password))
-    tag: ((branch))
-    registry_mirror:
-      host: ((docker-hub-mirror))
-      username: ((docker-hub-mirror-username))
-      password: ((docker-hub-mirror-password))
   gradle-enterprise-task-params: &gradle-enterprise-task-params
     GRADLE_ENTERPRISE_ACCESS_KEY: ((gradle_enterprise_secret_access_key))
     GRADLE_ENTERPRISE_CACHE_USERNAME: ((gradle_enterprise_cache_user.username))
@@ -36,19 +31,17 @@ anchors:
     build_number: "${BUILD_PIPELINE_NAME}-${BUILD_JOB_NAME}-${BUILD_NAME}"
     disable_checksum_uploads: true
     threads: 8
-  docker-hub-mirror-vars: &docker-hub-mirror-vars
-    docker-hub-mirror: ((docker-hub-mirror))
-    docker-hub-mirror-username: ((docker-hub-mirror-username))
-    docker-hub-mirror-password: ((docker-hub-mirror-password))
 resource_types:
 - name: artifactory-resource
   type: registry-image
   source:
+    <<: *registry-image-source
     repository: springio/artifactory-resource
     tag: 0.0.17
 - name: github-status-resource
   type: registry-image
   source:
+    <<: *registry-image-source
     repository: dpb587/github-status-resource
     tag: master
 resources:
@@ -82,8 +75,9 @@ resources:
   type: registry-image
   icon: docker
   source:
-    <<: *registry-image-resource-source
+    <<: *registry-image-source
     repository: ((docker-hub-organization))/compatibility-test-plugin-ci
+    tag: ((branch))
 - name: artifactory-repo
   type: artifactory-resource
   icon: package-variant
@@ -113,7 +107,6 @@ jobs:
       image: ci-image
     vars:
       ci-image-name: ci-image
-      <<: *docker-hub-mirror-vars
   - put: ci-image
     params:
       image: ci-image/image.tar
