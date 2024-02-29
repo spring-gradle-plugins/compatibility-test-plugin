@@ -26,8 +26,9 @@ repositories {
 
 dependencies {
 	checkstyle("io.spring.javaformat:spring-javaformat-checkstyle:$springJavaFormatVersion")
-	testImplementation("org.assertj:assertj-core:3.24.2")
-	testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
+	testImplementation("org.assertj:assertj-core:3.25.3")
+	testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
+	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 java {
