@@ -26,7 +26,7 @@ import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.DependencyResolveDetails;
 import org.gradle.api.artifacts.ModuleVersionSelector;
 import org.gradle.api.plugins.JavaBasePlugin;
-import org.gradle.api.plugins.JavaPluginConvention;
+import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.api.tasks.testing.Test;
@@ -76,7 +76,7 @@ public class CompatibilityTestPlugin implements Plugin<Project> {
 		compatibilityTest.setDescription("Runs the unit tests with "
 				+ dependencyVersions.stream().map(DependencyVersion::getDescription).collect(Collectors.joining(", ")));
 		compatibilityTest.setGroup(JavaBasePlugin.VERIFICATION_GROUP);
-		SourceSetContainer sourceSets = project.getConvention().findPlugin(JavaPluginConvention.class).getSourceSets();
+		SourceSetContainer sourceSets = project.getExtensions().getByType(JavaPluginExtension.class).getSourceSets();
 		SourceSet testSourceSet = sourceSets.getByName(SourceSet.TEST_SOURCE_SET_NAME);
 		String runtimeClasspathConfigurationName = testSourceSet.getRuntimeClasspathConfigurationName();
 		Configuration configuration = project.getConfigurations()
