@@ -1,6 +1,8 @@
 # Compatibility Test Plugin
 
 A Gradle plugin for testing a project's compatibility with different versions of its dependencies.
+Gradle 7.6 and 8.x are supported.
+
 
 
 ## Applying the Plugin
