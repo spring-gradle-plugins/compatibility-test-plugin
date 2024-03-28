@@ -7,8 +7,8 @@ Gradle 7.6 and 8.x are supported.
 
 ## Applying the Plugin
 
-The plugin is published to https://repo.spring.io.
-Depending on the version you wish to use, it will be availble from the `plugins-snapshot-local` or `plugins-release` repository.
+The plugin is published to Maven Central.
+Additionally, snapshots are published to https://repo.spring.io/plugins-snapshot-local.
 
 The first step in using the plugin is to make the necessary repository available for plugin resolution.
 This is done by configuring a plugin management repository in `settings.gradle`, as shown in the following example:
@@ -17,7 +17,7 @@ This is done by configuring a plugin management repository in `settings.gradle`,
 pluginManagement {
 	repositories {
 		gradlePluginPortal()
-		maven { url 'https://repo.spring.io/plugins-release' }
+		mavenCentral()
 	}
 }
 ```
