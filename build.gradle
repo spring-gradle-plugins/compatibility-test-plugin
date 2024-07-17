@@ -77,11 +77,11 @@ publishing {
 			}
 		}
 	}
-	if (project.hasProperty("distributionRepository")) {
+	if (project.hasProperty("deploymentRepository")) {
 		repositories {
 			maven {
-				url = "${distributionRepository}"
-				name = "distribution"
+				url = "${deploymentRepository}"
+				name = "deployment"
 			}
 		}
 	}
