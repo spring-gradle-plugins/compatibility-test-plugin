@@ -29,6 +29,7 @@ import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
+import org.gradle.api.tasks.compile.JavaCompile;
 import org.gradle.api.tasks.testing.Test;
 
 import io.spring.gradle.compatibilitytest.CompatibilityMatrix.DependencyVersion;
@@ -54,30 +55,55 @@ public class CompatibilityTestPlugin implements Plugin<Project> {
 			return;
 		}
 		CartesianProduct.of(matrixEntries)
-			.forEach((dependencyVersions) -> configureTestTask(project, dependencyVersions, extension));
+			.forEach((dependencyVersions) -> configureTasks(project, dependencyVersions, extension));
 	}
 
-	private void configureTestTask(Project project, List<DependencyVersion> dependencyVersions,
+	private void configureTasks(Project project, List<DependencyVersion> dependencyVersions,
 			CompatibilityTestExtension extension) {
 		String identifier = dependencyVersions.stream()
 			.map(DependencyVersion::getIdentifier)
 			.collect(Collectors.joining("_"));
+		JavaCompile javaCompile = project.getTasks()
+			.create("compileCompatibilityTestJava_" + identifier, JavaCompile.class,
+					(task) -> configureJavaCompileTask(project, task, identifier, dependencyVersions));
 		Test compatibilityTest = project.getTasks()
 			.create("compatibilityTest_" + identifier, Test.class,
-					(task) -> configureMatrixTestTask(project, task, identifier, dependencyVersions));
+					(task) -> configureMatrixTestTask(project, task, javaCompile, identifier, dependencyVersions));
 		if (extension.isUseJUnitPlatform()) {
 			compatibilityTest.useJUnitPlatform();
 		}
 		project.getTasks().getByName(JavaBasePlugin.CHECK_TASK_NAME).dependsOn(compatibilityTest);
 	}
 
-	private void configureMatrixTestTask(Project project, Test compatibilityTest, String identifier,
+	private void configureJavaCompileTask(Project project, JavaCompile javaCompile, String identifier,
 			List<DependencyVersion> dependencyVersions) {
+		javaCompile.setDescription("Compiles test Java source with "
+				+ dependencyVersions.stream().map(DependencyVersion::getDescription).collect(Collectors.joining(", ")));
+		SourceSetContainer sourceSets = project.getExtensions().getByType(JavaPluginExtension.class).getSourceSets();
+		SourceSet testSourceSet = sourceSets.getByName(SourceSet.TEST_SOURCE_SET_NAME);
+		javaCompile.setSource(testSourceSet.getAllJava());
+		javaCompile.getDestinationDirectory()
+			.set(project.getLayout().getBuildDirectory().dir("classes/java/compatibilityTest_" + identifier));
+		String compileClasspathConfigurationName = testSourceSet.getCompileClasspathConfigurationName();
+		Configuration configuration = project.getConfigurations()
+			.create(compileClasspathConfigurationName + "_" + identifier);
+		configuration.extendsFrom(project.getConfigurations().getByName(compileClasspathConfigurationName));
+		configuration.getResolutionStrategy()
+			.eachDependency((details) -> dependencyVersions.stream()
+				.filter((dependencyVersion) -> matches(dependencyVersion, details))
+				.forEach((dependencyVersion) -> details.useVersion(dependencyVersion.getVersion())));
+		javaCompile.setClasspath(
+				project.files(sourceSets.getByName(SourceSet.MAIN_SOURCE_SET_NAME).getOutput(), configuration));
+	}
+
+	private void configureMatrixTestTask(Project project, Test compatibilityTest, JavaCompile javaCompile,
+			String identifier, List<DependencyVersion> dependencyVersions) {
 		compatibilityTest.setDescription("Runs the unit tests with "
 				+ dependencyVersions.stream().map(DependencyVersion::getDescription).collect(Collectors.joining(", ")));
 		compatibilityTest.setGroup(JavaBasePlugin.VERIFICATION_GROUP);
 		SourceSetContainer sourceSets = project.getExtensions().getByType(JavaPluginExtension.class).getSourceSets();
 		SourceSet testSourceSet = sourceSets.getByName(SourceSet.TEST_SOURCE_SET_NAME);
+		compatibilityTest.dependsOn(testSourceSet.getProcessResourcesTaskName());
 		String runtimeClasspathConfigurationName = testSourceSet.getRuntimeClasspathConfigurationName();
 		Configuration configuration = project.getConfigurations()
 			.create(runtimeClasspathConfigurationName + "_" + identifier);
@@ -86,8 +112,9 @@ public class CompatibilityTestPlugin implements Plugin<Project> {
 			.eachDependency((details) -> dependencyVersions.stream()
 				.filter((dependencyVersion) -> matches(dependencyVersion, details))
 				.forEach((dependencyVersion) -> details.useVersion(dependencyVersion.getVersion())));
-		compatibilityTest.setClasspath(project.files(testSourceSet.getOutput(),
-				sourceSets.getByName(SourceSet.MAIN_SOURCE_SET_NAME).getOutput(), configuration));
+		compatibilityTest.setClasspath(
+				project.files(javaCompile.getDestinationDirectory(), testSourceSet.getOutput().getResourcesDir(),
+						sourceSets.getByName(SourceSet.MAIN_SOURCE_SET_NAME).getOutput(), configuration));
 	}
 
 	private boolean matches(DependencyVersion dependencyVersion, DependencyResolveDetails details) {

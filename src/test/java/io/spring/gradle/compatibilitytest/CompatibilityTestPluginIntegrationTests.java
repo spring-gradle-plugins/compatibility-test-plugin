@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2023 the original author or authors.
+ * Copyright 2014-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package io.spring.gradle.compatibilitytest;
 
+import org.gradle.testkit.runner.BuildResult;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -36,6 +37,12 @@ class CompatibilityTestPluginIntegrationTests {
 
 	@Test
 	void whenOnlyGroupIdIsSetThenVersionsOfAllModulesInTheGroupAreChanged() {
+		assertThat(this.gradleBuild.build("resolve", "-PconfigurationName=testCompileClasspath").getOutput())
+			.contains("spring-core-5.2.10.RELEASE.jar", "spring-jcl-5.2.10.RELEASE.jar");
+		assertThat(this.gradleBuild.build("resolve", "-PconfigurationName=testCompileClasspath_spring_framework_5.3.0")
+			.getOutput()).contains("spring-core-5.3.0.jar", "spring-jcl-5.3.0.jar");
+		assertThat(this.gradleBuild.build("resolve", "-PconfigurationName=testCompileClasspath_spring_framework_5.3.1")
+			.getOutput()).contains("spring-core-5.3.1.jar", "spring-jcl-5.3.1.jar");
 		assertThat(this.gradleBuild.build("resolve", "-PconfigurationName=testRuntimeClasspath").getOutput())
 			.contains("spring-core-5.2.10.RELEASE.jar", "spring-jcl-5.2.10.RELEASE.jar");
 		assertThat(this.gradleBuild.build("resolve", "-PconfigurationName=testRuntimeClasspath_spring_framework_5.3.0")
@@ -46,6 +53,12 @@ class CompatibilityTestPluginIntegrationTests {
 
 	@Test
 	void whenGroupIdAndArtifactIdAreSetThenOnlyTheVersionOfThatModuleIsChanged() {
+		assertThat(this.gradleBuild.build("resolve", "-PconfigurationName=testCompileClasspath").getOutput())
+			.contains("spring-core-5.2.10.RELEASE.jar", "spring-jcl-5.2.10.RELEASE.jar");
+		assertThat(this.gradleBuild.build("resolve", "-PconfigurationName=testCompileClasspath_spring-jcl_5.3.0")
+			.getOutput()).contains("spring-core-5.2.10.RELEASE.jar", "spring-jcl-5.3.0.jar");
+		assertThat(this.gradleBuild.build("resolve", "-PconfigurationName=testCompileClasspath_spring-jcl_5.3.1")
+			.getOutput()).contains("spring-core-5.2.10.RELEASE.jar", "spring-jcl-5.3.1.jar");
 		assertThat(this.gradleBuild.build("resolve", "-PconfigurationName=testRuntimeClasspath").getOutput())
 			.contains("spring-core-5.2.10.RELEASE.jar", "spring-jcl-5.2.10.RELEASE.jar");
 		assertThat(this.gradleBuild.build("resolve", "-PconfigurationName=testRuntimeClasspath_spring-jcl_5.3.0")
@@ -56,6 +69,25 @@ class CompatibilityTestPluginIntegrationTests {
 
 	@Test
 	void whenMultipleDependenciesAreConfiguredThenAllPermutationsAreTested() {
+		assertThat(this.gradleBuild.build("resolve", "-PconfigurationName=testCompileClasspath").getOutput()).contains(
+				"spring-core-5.2.10.RELEASE.jar", "spring-jcl-5.2.10.RELEASE.jar", "reactor-core-3.3.17.RELEASE.jar",
+				"reactive-streams-1.0.3.jar");
+		assertThat(this.gradleBuild
+			.build("resolve", "-PconfigurationName=testCompileClasspath_spring_framework_5.3.0_reactor_3.4.0")
+			.getOutput()).contains("spring-core-5.3.0.jar", "spring-jcl-5.3.0.jar", "reactor-core-3.4.0.jar",
+					"reactive-streams-1.0.3.jar");
+		assertThat(this.gradleBuild
+			.build("resolve", "-PconfigurationName=testCompileClasspath_spring_framework_5.3.0_reactor_3.4.1")
+			.getOutput()).contains("spring-core-5.3.0.jar", "spring-jcl-5.3.0.jar", "reactor-core-3.4.1.jar",
+					"reactive-streams-1.0.3.jar");
+		assertThat(this.gradleBuild
+			.build("resolve", "-PconfigurationName=testCompileClasspath_spring_framework_5.3.1_reactor_3.4.0")
+			.getOutput()).contains("spring-core-5.3.1.jar", "spring-jcl-5.3.1.jar", "reactor-core-3.4.0.jar",
+					"reactive-streams-1.0.3.jar");
+		assertThat(this.gradleBuild
+			.build("resolve", "-PconfigurationName=testCompileClasspath_spring_framework_5.3.1_reactor_3.4.1")
+			.getOutput()).contains("spring-core-5.3.1.jar", "spring-jcl-5.3.1.jar", "reactor-core-3.4.1.jar",
+					"reactive-streams-1.0.3.jar");
 		assertThat(this.gradleBuild.build("resolve", "-PconfigurationName=testRuntimeClasspath").getOutput()).contains(
 				"spring-core-5.2.10.RELEASE.jar", "spring-jcl-5.2.10.RELEASE.jar", "reactor-core-3.3.17.RELEASE.jar",
 				"reactive-streams-1.0.3.jar");
@@ -75,6 +107,14 @@ class CompatibilityTestPluginIntegrationTests {
 			.build("resolve", "-PconfigurationName=testRuntimeClasspath_spring_framework_5.3.1_reactor_3.4.1")
 			.getOutput()).contains("spring-core-5.3.1.jar", "spring-jcl-5.3.1.jar", "reactor-core-3.4.1.jar",
 					"reactive-streams-1.0.3.jar");
+	}
+
+	@Test
+	void javaCompileTaskIsCreatedForEachPermutation() {
+		BuildResult build = this.gradleBuild.build("dumpJavaCompileTasks");
+		String output = build.getOutput();
+		assertThat(output).contains("compileCompatibilityTestJava_spring_framework_5.3.0",
+				"compileCompatibilityTestJava_spring_framework_5.3.1");
 	}
 
 }
