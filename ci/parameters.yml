@@ -1,7 +1,0 @@
-github-repo: "https://github.com/spring-gradle-plugins/compatibility-test-plugin.git"
-github-repo-name: "spring-gradle-plugins/compatibility-test-plugin"
-docker-hub-organization: "springci"
-artifactory-server: "https://repo.spring.io"
-branch: "main"
-build-name: "compatibility-test-plugin"
-task-timeout: 1h00m
