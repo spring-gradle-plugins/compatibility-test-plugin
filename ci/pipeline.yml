@@ -8,9 +8,7 @@ anchors:
     username: ((docker-hub-username))
     password: ((docker-hub-password))
   gradle-enterprise-task-params: &gradle-enterprise-task-params
-    GRADLE_ENTERPRISE_ACCESS_KEY: ((gradle_enterprise_secret_access_key))
-    GRADLE_ENTERPRISE_CACHE_USERNAME: ((gradle_enterprise_cache_user.username))
-    GRADLE_ENTERPRISE_CACHE_PASSWORD: ((gradle_enterprise_cache_user.password))
+    DEVELOCITY_ACCESS_KEY: ((gradle_enterprise_secret_access_key))
   artifactory-task-params: &artifactory-task-params
     ARTIFACTORY_SERVER: ((artifactory-server))
     ARTIFACTORY_USERNAME: ((artifactory-username))
