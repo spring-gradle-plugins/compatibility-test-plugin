@@ -13,8 +13,8 @@ pluginManagement {
 }
 
 plugins {
-	id "com.gradle.enterprise" version "3.15.1"
-	id "io.spring.ge.conventions" version "0.0.15"
+	id "com.gradle.enterprise" version "3.17.5"
+	id "io.spring.develocity.conventions" version "0.0.17"
 }
 
 rootProject.name = 'compatibility-test-plugin'
