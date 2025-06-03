@@ -21,12 +21,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import io.spring.gradle.compatibilitytest.testkit.GradleBuild;
-import io.spring.gradle.compatibilitytest.testkit.GradleBuildExtension;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.TaskOutcome;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
+import io.spring.gradle.compatibilitytest.testkit.GradleBuild;
+import io.spring.gradle.compatibilitytest.testkit.GradleBuildExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
