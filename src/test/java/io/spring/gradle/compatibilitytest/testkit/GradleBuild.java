@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2023 the original author or authors.
+ * Copyright 2012-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,6 +40,8 @@ public class GradleBuild {
 
 	private String script;
 
+	private String gradleVersion;
+
 	void before() throws IOException {
 		this.projectDir = Files.createTempDirectory("gradle-").toFile();
 	}
@@ -67,6 +69,11 @@ public class GradleBuild {
 		return this;
 	}
 
+	public GradleBuild gradleVersion(String gradleVersion) {
+		this.gradleVersion = gradleVersion;
+		return this;
+	}
+
 	public BuildResult build(String... arguments) {
 		try {
 			return prepareRunner(arguments).build();
@@ -81,10 +88,12 @@ public class GradleBuild {
 				StandardCopyOption.REPLACE_EXISTING);
 		GradleRunner gradleRunner = GradleRunner.create()
 			.withProjectDir(this.projectDir)
-			.withPluginClasspath(pluginClasspath());
-		gradleRunner.withDebug(true);
+			.withPluginClasspath(pluginClasspath())
+			.withDebug(true);
+		if (this.gradleVersion != null) {
+			gradleRunner = gradleRunner.withGradleVersion(this.gradleVersion);
+		}
 		List<String> allArguments = new ArrayList<>();
-		allArguments.add("--stacktrace");
 		allArguments.addAll(Arrays.asList(arguments));
 		allArguments.add("--warning-mode");
 		allArguments.add("all");

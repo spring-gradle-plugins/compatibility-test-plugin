@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2024 the original author or authors.
+ * Copyright 2014-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -112,6 +112,7 @@ public class CompatibilityTestPlugin implements Plugin<Project> {
 			.eachDependency((details) -> dependencyVersions.stream()
 				.filter((dependencyVersion) -> matches(dependencyVersion, details))
 				.forEach((dependencyVersion) -> details.useVersion(dependencyVersion.getVersion())));
+		compatibilityTest.setTestClassesDirs(testSourceSet.getOutput().getClassesDirs());
 		compatibilityTest.setClasspath(
 				project.files(javaCompile.getDestinationDirectory(), testSourceSet.getOutput().getResourcesDir(),
 						sourceSets.getByName(SourceSet.MAIN_SOURCE_SET_NAME).getOutput(), configuration));

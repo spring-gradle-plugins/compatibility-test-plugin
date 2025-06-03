@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2024 the original author or authors.
+ * Copyright 2014-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,17 @@
 
 package io.spring.gradle.compatibilitytest;
 
-import org.gradle.testkit.runner.BuildResult;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 import io.spring.gradle.compatibilitytest.testkit.GradleBuild;
 import io.spring.gradle.compatibilitytest.testkit.GradleBuildExtension;
+import org.gradle.testkit.runner.BuildResult;
+import org.gradle.testkit.runner.TaskOutcome;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -115,6 +120,32 @@ class CompatibilityTestPluginIntegrationTests {
 		String output = build.getOutput();
 		assertThat(output).contains("compileCompatibilityTestJava_spring_framework_5.3.0",
 				"compileCompatibilityTestJava_spring_framework_5.3.1");
+	}
+
+	@Test
+	void testsAreExecutedWithoutDeprecationWarnings() throws IOException {
+		File projectDir = this.gradleBuild.getProjectDir();
+		File exampleTests = new File(projectDir, "src/test/java/example/ExampleTests.java");
+		exampleTests.getParentFile().mkdirs();
+		try (PrintWriter writer = new PrintWriter(new FileWriter(exampleTests))) {
+			writer.println("package example;");
+			writer.println("");
+			writer.println("import org.junit.jupiter.api.Test;");
+			writer.println("");
+			writer.println("class ExampleTests {");
+			writer.println("");
+			writer.println("    @Test");
+			writer.println("    void test() {");
+			writer.println("    }");
+			writer.println("");
+			writer.println("}");
+		}
+		BuildResult result = this.gradleBuild.gradleVersion("8.1").build("build");
+		assertThat(result.task(":compatibilityTest_spring_framework_5.3.0").getOutcome())
+			.isEqualTo(TaskOutcome.SUCCESS);
+		assertThat(result.task(":compatibilityTest_spring_framework_5.3.1").getOutcome())
+			.isEqualTo(TaskOutcome.SUCCESS);
+		assertThat(result.getOutput()).doesNotContain("deprecated");
 	}
 
 }
